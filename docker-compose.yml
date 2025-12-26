@@ -3,6 +3,11 @@ services:
   geminibot:
     build: .
     container_name: geminibot
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - GEMINI_API_TOKEN=${GEMINI_API_TOKEN}
+      - GEMINI_MODEL=${GEMINI_MODEL}
+      - AUTHORIZED_USER=${AUTHORIZED_USER}
     volumes:
       - ./data:/usr/src/app/data
     restart: unless-stopped
