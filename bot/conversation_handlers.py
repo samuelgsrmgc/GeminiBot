@@ -12,7 +12,6 @@ from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 import PIL.Image
 
-from main import _
 from core import GeminiChat
 from database.database import (
     create_conversation,

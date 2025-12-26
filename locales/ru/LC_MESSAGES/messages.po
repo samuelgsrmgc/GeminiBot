@@ -37,11 +37,12 @@ msgstr ""
 msgid ""
 "Hi. It's Gemini Chat Bot. You can ask me anything and talk to me about "
 "what you want"
-msgstr ""
+msgstr "Привет. Это чат-бот «Близнецы». Вы можете задать мне любой вопрос "
+"и поговорить со мной о том, что вас интересует."
 
 #: bot/conversation_handlers.py:139
 msgid "Start Again"
-msgstr ""
+msgstr "Начать заново"
 
 #: bot/conversation_handlers.py:159
 msgid "You asked for a conversation. OK, Let's start conversation!"

@@ -28,8 +28,9 @@ from bot.conversation_handlers import (
 localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "locales")
 # Determine language from environment variable, default to 'ru'
 lang = os.getenv("LANGUAGE", "ru")
-translate = gettext.translation("messages", localedir, languages=[lang], fallback=True)
-_ = translate.gettext
+# Install _() globally
+gettext.install("messages", localedir, names=("ngettext",))
+gettext.translation("messages", localedir, languages=[lang], fallback=True).install()
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
