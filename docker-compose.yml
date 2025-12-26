@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  geminibot:
+    build: .
+    container_name: geminibot
+    env_file:
+      - .env
+    volumes:
+      - ./conversations_data.db:/usr/src/app/conversations_data.db
+    restart: unless-stopped

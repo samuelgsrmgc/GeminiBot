@@ -63,6 +63,36 @@ Run GeminiBot using:
 python main.py
 ```
 
+### Deployment with Docker
+
+You can also run GeminiBot using Docker and Docker Compose. This is the recommended way to deploy the bot in production.
+
+**Prerequisites:**
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Steps:**
+
+1.  Make sure you have a `.env` file with your API keys and configuration, as described in the "Configuration" section.
+2.  Build and run the bot using Docker Compose:
+
+    ```bash
+    docker-compose up -d --build
+    ```
+
+3.  The bot will now be running in the background. To view the logs, you can use the following command:
+
+    ```bash
+    docker-compose logs -f
+    ```
+
+4.  To stop the bot, use the following command:
+
+    ```bash
+    docker-compose down
+    ```
+
 ## Features
 
 - Engage in online conversations with Google's Gemini AI chatbot

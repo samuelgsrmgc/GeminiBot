@@ -69,6 +69,36 @@ To obtain your Telegram account ID, you can send a message to Show Json Bot in T
 
 If you want to modify user restrictions, you can examine the `restricted` decorator in the `bot/conversation_handlers.py` file.
 
+### Deployment with Docker
+
+You can also run GeminiBot using Docker and Docker Compose. This is the recommended way to deploy the bot in production.
+
+**Prerequisites:**
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Steps:**
+
+1.  Make sure you have a `.env` file with your API keys and configuration, as described in the "Configuration" section.
+2.  Build and run the bot using Docker Compose:
+
+    ```bash
+    docker-compose up -d --build
+    ```
+
+3.  The bot will now be running in the background. To view the logs, you can use the following command:
+
+    ```bash
+    docker-compose logs -f
+    ```
+
+4.  To stop the bot, use the following command:
+
+    ```bash
+    docker-compose down
+    ```
+
 ## Deploy and Run Telegram Bot on Linux Server
 
 To deploy your bot there are several ways like Heroku and PythonAnywhere or other PaaS providers. I prefer to use bare Linux VPS and supervisor. First of all clone the project in your Linux machine:
