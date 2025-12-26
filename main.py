@@ -26,7 +26,9 @@ from bot.conversation_handlers import (
 
 # Setup translation
 localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "locales")
-translate = gettext.translation("messages", localedir, fallback=True)
+# Determine language from environment variable, default to 'ru'
+lang = os.getenv("LANGUAGE", "ru")
+translate = gettext.translation("messages", localedir, languages=[lang], fallback=True)
 _ = translate.gettext
 
 logging.basicConfig(

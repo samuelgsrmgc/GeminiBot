@@ -95,6 +95,7 @@ For local development, it's recommended to use a Python virtual environment to m
     export GEMINI_API_TOKEN=<Your Gemini API key>
     export GEMINI_MODEL=<Your Gemini Model> # e.g., gemini-flash-latest
     export AUTHORIZED_USER="<your_user_id_1>,<your_user_id_2>"
+    export LANGUAGE=ru # Set the desired language (e.g., en, ru)
     ```
 
 4.  **Run the bot:**
@@ -111,6 +112,7 @@ The bot is configured using environment variables. The following variables are r
 -   `GEMINI_API_TOKEN`: Your Gemini API key from Google AI Studio.
 -   `GEMINI_MODEL`: The Gemini model to use (e.g., `gemini-flash-latest`).
 -   `AUTHORIZED_USER`: A comma-separated list of your Telegram user IDs to restrict bot access.
+-   `LANGUAGE`: The language code for the bot's interface (e.g., `en`, `ru`). Defaults to `ru`.
 
 ### Deployment with Docker
 
@@ -152,9 +154,10 @@ Then, set the environment variables in your shell:
 ```bash
 export TELEGRAM_BOT_TOKEN=<Your Telegram Bot Token>
 export GEMINI_API_TOKEN=<Your Gemini API key>
-export GEMINI_MODEL=<Your Gemini Model>
+export GEMINI_MODEL=gemini-flash-latest # e.g., gemini-flash-latest
 export AUTHORIZED_USER="<your_user_id_1>,<your_user_id_2>"
-```
+export LANGUAGE=ru # Set the desired language (e.g., en, ru)
+``````
 In the next step install project reqirements with this code in your Virual environment:
 ```
 python3 -m venv venv --prompt GeminiBot
