@@ -74,7 +74,7 @@ You can also run GeminiBot using Docker and Docker Compose. This is the recommen
 
 **Steps:**
 
-1.  Make sure you have a `.env` file with your API keys and configuration, as described in the "Configuration" section.
+1.  Set the required environment variables. You can do this by creating a `.env` file in the project root (as described in the "Configuration" section), or by setting them in your shell.
 2.  Build and run the bot using Docker Compose:
 
     ```bash
