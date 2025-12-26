@@ -48,20 +48,42 @@ The bot is configured using environment variables. The following variables are r
 
 -   `TELEGRAM_BOT_TOKEN`: Your Telegram bot token from BotFather.
 -   `GEMINI_API_TOKEN`: Your Gemini API key from Google AI Studio.
--   `GEMINI_MODEL`: The Gemini model to use (e.g., `gemini-1.5-flash`).
+-   `GEMINI_MODEL`: The Gemini model to use (e.g., `gemini-flash-latest`).
 -   `AUTHORIZED_USER`: Your Telegram user ID to restrict bot access.
 
 ### Local Development
 
-For local development, you can set the environment variables in your shell:
+For local development, it's recommended to use a Python virtual environment to manage dependencies.
 
-```bash
-export TELEGRAM_BOT_TOKEN=<Your Telegram Bot Token>
-export GEMINI_API_TOKEN=<Your Gemini API key>
-export GEMINI_MODEL=<Your Gemini Model>
-export AUTHORIZED_USER=<Your Telegram account ID number>
-python main.py
-```
+**Steps:**
+
+1.  **Create and activate a virtual environment:**
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Set environment variables:** Set the required environment variables in your active shell session. Replace the placeholder values with your actual tokens and IDs.
+
+    ```bash
+    export TELEGRAM_BOT_TOKEN=<Your Telegram Bot Token>
+    export GEMINI_API_TOKEN=<Your Gemini API key>
+    export GEMINI_MODEL=<Your Gemini Model> # e.g., gemini-flash-latest
+    export AUTHORIZED_USER=<Your Telegram account ID number>
+    ```
+
+4.  **Run the bot:**
+
+    ```bash
+    python main.py
+    ```
 
 ### Deployment with Docker
 
