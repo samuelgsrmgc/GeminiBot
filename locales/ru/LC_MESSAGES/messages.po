@@ -27,11 +27,11 @@ msgstr "Начать новый диалог"
 #: bot/conversation_handlers.py:67 bot/conversation_handlers.py:137
 #: bot/conversation_handlers.py:461
 msgid "Image Description"
-msgstr ""
+msgstr "Описание изображения"
 
 #: bot/conversation_handlers.py:70 bot/conversation_handlers.py:138
 msgid "Chat History"
-msgstr ""
+msgstr "История чата"
 
 #: bot/conversation_handlers.py:74 bot/conversation_handlers.py:144
 msgid ""
@@ -46,69 +46,68 @@ msgstr "Начать заново"
 
 #: bot/conversation_handlers.py:159
 msgid "You asked for a conversation. OK, Let's start conversation!"
-msgstr ""
+msgstr "Вы попросили начать разговор. Хорошо, давайте начнем!"
 
 #: bot/conversation_handlers.py:163
 msgid "You asked for a continue conversation. OK, Let's go!"
-msgstr ""
+msgstr "Вы попросили продолжить разговор. Хорошо, поехали!"
 
 #: bot/conversation_handlers.py:165
 msgid "Return to menu"
-msgstr ""
+msgstr "Вернуться в меню"
 
 #: bot/conversation_handlers.py:183 bot/conversation_handlers.py:275
 #: bot/conversation_handlers.py:302 bot/conversation_handlers.py:323
 #: bot/conversation_handlers.py:343 bot/conversation_handlers.py:425
 msgid "Back to menu"
-msgstr ""
+msgstr "Назад в меню"
 
 #: bot/conversation_handlers.py:187 bot/conversation_handlers.py:346
 msgid "Wait for response processing..."
-msgstr ""
+msgstr "Ожидайте обработку ответа..."
 
 #: bot/conversation_handlers.py:217
 msgid "Save and Back to menu"
-msgstr ""
+msgstr "Сохранить и вернуться в меню"
 
 #: bot/conversation_handlers.py:222
 msgid "Back to menu without saving"
-msgstr ""
+msgstr "Вернуться в меню без сохранения"
 
 #: bot/conversation_handlers.py:267
 msgid "Continue Conversations"
-msgstr ""
+msgstr "Продолжить диалоги"
 
 #: bot/conversation_handlers.py:272
 msgid "Delete Conversation"
-msgstr ""
+msgstr "Удалить диалог"
 
 #: bot/conversation_handlers.py:306
 msgid ""
 "Conversation history deleted successfully. Back to menu Start new "
 "Conversation"
-msgstr ""
+msgstr "История диалогов успешно удалена. Назад в меню Начать новый диалог"
 
 #: bot/conversation_handlers.py:327
 msgid "You asked for Image description. OK, Send your image with caption!"
-msgstr ""
+msgstr "Вы попросили описание изображения. Хорошо, отправьте свое изображение с подписью!"
 
 #: bot/conversation_handlers.py:367
 msgid "Empty response from Gemini"
-msgstr ""
+msgstr "Пустой ответ от Gemini"
 
 #: bot/conversation_handlers.py:370
 msgid "Couldn't generate a response. Please try again."
-msgstr ""
+msgstr "Не удалось сгенерировать ответ. Пожалуйста, попробуйте еще раз."
 
 #: bot/conversation_handlers.py:419
 msgid "You have not any chat history"
-msgstr ""
+msgstr "У вас нет истории чатов"
 
 #: bot/conversation_handlers.py:462
 msgid "Refresh"
-msgstr ""
+msgstr "Обновить"
 
 #: bot/conversation_handlers.py:466
 msgid "Until next time!"
-msgstr ""
-
+msgstr "До скорого!"
