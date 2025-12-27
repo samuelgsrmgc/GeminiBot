@@ -8,6 +8,7 @@ services:
       - GEMINI_API_TOKEN=${GEMINI_API_TOKEN}
       - GEMINI_MODEL=${GEMINI_MODEL}
       - AUTHORIZED_USER=${AUTHORIZED_USER}
+      - LANGUAGE=${LANGUAGE}
     volumes:
       - ./data:/usr/src/app/data
     restart: unless-stopped
