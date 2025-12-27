@@ -177,8 +177,6 @@ async def reply_and_new_message(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Send user message to Gemini core and respond and wait for new message or exit command"""
-    query = update.callback_query
-
     keyboard = [[InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -188,59 +186,69 @@ async def reply_and_new_message(
         reply_markup=reply_markup,
     )
 
-    ##############
-
-    text = update.message.text
-    conv_id = context.user_data.get("conversation_id")
-    conversation_history = []
-    if conv_id:
-        with open(f"./pickles/{conv_id}.pickle", "rb") as fp:
-            conversation_history = pickle.load(fp)
-
-    gemini_chat = context.user_data.get("gemini_chat")
-    if not gemini_chat:
-        logger.info("Creating new conversation instance")
-        gemini_chat = GeminiChat(
-            gemini_token=os.getenv("GEMINI_API_TOKEN"),
-            chat_history=conversation_history,
-        )
-        gemini_chat.start_chat()
-
-    response = gemini_chat.send_message(text).encode("utf-8").decode("utf-8", "ignore")
-
-    context.user_data["gemini_chat"] = gemini_chat
-
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                _("Save and Back to menu"), callback_data="Start_Again_SAVE"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                _("Back to menu without saving"), callback_data="Start_Again"
-            )
-        ],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
     try:
-        await context.bot.send_message(
-            text=response,
-            parse_mode="Markdown",
-            reply_markup=reply_markup,
-            chat_id=update.message.chat_id,
-        )
-        await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
+        text = update.message.text
+        conv_id = context.user_data.get("conversation_id")
+        conversation_history = []
+        if conv_id:
+            try:
+                with open(f"./pickles/{conv_id}.pickle", "rb") as fp:
+                    conversation_history = pickle.load(fp)
+            except FileNotFoundError:
+                logger.warning(f"Pickle file for conversation {conv_id} not found.")
+                # Handle the case where the pickle file is missing
+                # For example, send a message to the user and offer to start a new conversation
+                await update.message.reply_text(_("Sorry, I couldn't find the history for this conversation. Let's start a new one."))
+                return await start_over(update, context, None)
+
+
+        gemini_chat = context.user_data.get("gemini_chat")
+        if not gemini_chat:
+            logger.info("Creating new conversation instance")
+            gemini_chat = GeminiChat(
+                gemini_token=os.getenv("GEMINI_API_TOKEN"),
+                chat_history=conversation_history,
+            )
+            gemini_chat.start_chat()
+
+        response = gemini_chat.send_message(text).encode("utf-8").decode("utf-8", "ignore")
+        context.user_data["gemini_chat"] = gemini_chat
+
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    _("Save and Back to menu"), callback_data="Start_Again_SAVE"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    _("Back to menu without saving"), callback_data="Start_Again"
+                )
+            ],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        try:
+            await context.bot.send_message(
+                text=response,
+                parse_mode="Markdown",
+                reply_markup=reply_markup,
+                chat_id=update.message.chat_id,
+            )
+            await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
+
+        except Exception as e:
+            await context.bot.send_message(
+                text=strip_markdown(response),
+                reply_markup=reply_markup,
+                chat_id=update.message.chat_id,
+            )
+            await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
+            logging.warning(f"Error sending message: {e}")
 
     except Exception as e:
-        await context.bot.send_message(
-            text=strip_markdown(response),
-            reply_markup=reply_markup,
-            chat_id=update.message.chat_id,
-        )
-        await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
-        logging.warning(__name__, e)
+        logger.error(f"Error in reply_and_new_message: {e}")
+        await update.message.reply_text(_("An error occurred while processing your message."))
 
     return CONVERSATION
 
@@ -250,35 +258,43 @@ async def get_conversation_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE, conn
 ) -> int:
     """Get conversation from database and ask user if wants new conversation or not"""
+    try:
+        query_messsage = update.message.text.replace("/", "")
+        context.user_data["conversation_id"] = query_messsage
+        user_details = update.message.from_user.id
+        conv_specs = (user_details, query_messsage)
 
-    query_messsage = update.message.text.replace("/", "")
-    context.user_data["conversation_id"] = query_messsage
-    user_details = update.message.from_user.id
-    conv_specs = (user_details, query_messsage)
+        conversation = select_conversation_by_id(conn, conv_specs)
 
-    conversation = select_conversation_by_id(conn, conv_specs)
+        if not conversation:
+            await update.message.reply_text(_("Conversation not found."))
+            return CONVERSATION_HISTORY
 
-    message_content = _(f"Conversation {conversation.get('conv_id')} retrieved and title is: {conversation.get('title')}")
+        message_content = _(f"Conversation {conversation.get('conv_id')} retrieved and title is: {conversation.get('title')}")
 
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                _("Continue Conversations"), callback_data="New_Conversation"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                _("Delete Conversation"), callback_data="Delete_Conversation"
-            )
-        ],
-        [InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    _("Continue Conversations"), callback_data="New_Conversation"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    _("Delete Conversation"), callback_data="Delete_Conversation"
+                )
+            ],
+            [InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
 
-    msg = await update.message.reply_text(
-        text=message_content, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN
-    )
-    context.user_data["to_delete_message"] = msg
+        msg = await update.message.reply_text(
+            text=message_content, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN
+        )
+        context.user_data["to_delete_message"] = msg
+
+    except Exception as e:
+        logger.error(f"Error in get_conversation_handler: {e}")
+        await update.message.reply_text(_("An error occurred while retrieving the conversation."))
 
     return CONVERSATION_HISTORY
 
@@ -288,25 +304,37 @@ async def delete_conversation_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE, conn
 ) -> int:
     """Delete conversation if user clicks on Delete button"""
-    query = update.callback_query
+    try:
+        query = update.callback_query
+        await query.answer()
 
-    await query.answer()
+        conversation_id = context.user_data.get("conversation_id")
+        if not conversation_id:
+            await query.edit_message_text(_("No conversation selected for deletion."))
+            return CHOOSING
 
-    conversation_id = context.user_data["conversation_id"]
-    user_details = query.from_user.id
-    conv_specs = (user_details, conversation_id)
+        user_details = query.from_user.id
+        conv_specs = (user_details, conversation_id)
 
-    conversation = delete_conversation_by_id(conn, conv_specs)
+        deleted = delete_conversation_by_id(conn, conv_specs)
 
-    keyboard = [[InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+        if not deleted:
+            await query.edit_message_text(_("Could not delete the conversation. It may have been already deleted."))
+            return CHOOSING
 
-    msg = await query.edit_message_text(
-        text=_("Conversation history deleted successfully. Back to menu Start new Conversation"),
-        reply_markup=reply_markup,
-        parse_mode=ParseMode.MARKDOWN,
-    )
-    context.user_data["to_delete_message"] = msg
+        keyboard = [[InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        msg = await query.edit_message_text(
+            text=_("Conversation history deleted successfully. Back to menu Start new Conversation"),
+            reply_markup=reply_markup,
+            parse_mode=ParseMode.MARKDOWN,
+        )
+        context.user_data["to_delete_message"] = msg
+
+    except Exception as e:
+        logger.error(f"Error in delete_conversation_handler: {e}")
+        await query.edit_message_text(_("An error occurred while deleting the conversation."))
 
     return CHOOSING
 
@@ -401,35 +429,41 @@ async def get_conversation_history(
     update: Update, context: ContextTypes.DEFAULT_TYPE, conn
 ) -> int:
     """Read conversations history of the user"""
-    query = update.callback_query
-    await query.answer()
-    logger.info("Received callback: PAGE#")
+    try:
+        query = update.callback_query
+        await query.answer()
+        logger.info("Received callback: PAGE#")
 
-    conversations_count = get_user_conversation_count(conn, query.from_user.id)
-    total_pages = math.ceil(float(conversations_count / 10))
+        user_id = query.from_user.id
+        conversations_count = get_user_conversation_count(conn, user_id)
+        total_pages = math.ceil(float(conversations_count / 10))
 
-    page_number = int(query.data.split("#")[1])
-    offset = (page_number - 1) * 10
+        page_number = int(query.data.split("#")[1])
+        offset = (page_number - 1) * 10
 
-    conversations = select_conversations_by_user(conn, (query.from_user.id, offset))
-    if conversations:
-        page_content = conversations_page_content(conversations)
-    else:
-        page_content = _("You have not any chat history")
+        conversations = select_conversations_by_user(conn, (user_id, offset))
+        if conversations:
+            page_content = conversations_page_content(conversations)
+        else:
+            page_content = _("You have not any chat history")
 
-    paginator = InlineKeyboardPaginator(
-        total_pages, current_page=page_number, data_pattern="PAGE#{page}"
-    )
-    paginator.add_after(
-        InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")
-    )
+        paginator = InlineKeyboardPaginator(
+            total_pages, current_page=page_number, data_pattern="PAGE#{page}"
+        )
+        paginator.add_after(
+            InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")
+        )
 
-    msg = await query.edit_message_text(
-        page_content,
-        reply_markup=paginator.markup,
-        parse_mode=ParseMode.MARKDOWN,
-    )
-    context.user_data["to_delete_message"] = msg
+        msg = await query.edit_message_text(
+            page_content,
+            reply_markup=paginator.markup,
+            parse_mode=ParseMode.MARKDOWN,
+        )
+        context.user_data["to_delete_message"] = msg
+
+    except Exception as e:
+        logger.error(f"Error in get_conversation_history: {e}")
+        await query.edit_message_text(_("An error occurred while retrieving the conversation history."))
 
     return CONVERSATION_HISTORY
 
@@ -443,13 +477,13 @@ async def done(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     try:
         user_data = context.user_data
-        gemini_chat = user_data["gemini_chat"]
+        if 'gemini_chat' in user_data and user_data['gemini_chat']:
+            user_data['gemini_chat'].close()
+    except Exception as e:
+        logger.error(f"Error in done handler: {e}")
 
-        gemini_chat.close()
-    except:
-        pass
-
-    user_data["gemini_chat"] = None
+    if 'gemini_chat' in context.user_data:
+        context.user_data["gemini_chat"] = None
 
     keyboard = [
         [
