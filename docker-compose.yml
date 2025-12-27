@@ -9,6 +9,7 @@ services:
       - GEMINI_MODEL=${GEMINI_MODEL}
       - AUTHORIZED_USER=${AUTHORIZED_USER}
       - LANGUAGE=${LANGUAGE}
+      - LOG_LEVEL=${LOG_LEVEL}
     volumes:
       - ./data:/usr/src/app/data
     restart: unless-stopped

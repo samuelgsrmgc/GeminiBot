@@ -51,6 +51,7 @@ The bot is configured using environment variables. The following variables are r
 -   `GEMINI_MODEL`: The Gemini model to use (e.g., `gemini-flash-latest`).
 -   `AUTHORIZED_USER`: A comma-separated list of your Telegram user IDs to restrict bot access.
 -   `LANGUAGE`: The language code for the bot's interface (e.g., `en`, `ru`). Defaults to `ru`.
+-   `LOG_LEVEL`: The logging level for the bot (e.g., `DEBUG`, `INFO`, `WARNING`, `ERROR`). Defaults to `INFO`.
 
 ### Local Development
 
