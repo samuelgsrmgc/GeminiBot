@@ -364,62 +364,65 @@ async def generate_text_from_image(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Send image to Gemini core and send response to user"""
-    query = update.callback_query
-    logger.info("Received callback: generate_text_from_image")
-
-    keyboard = [[InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    msg = await update.message.reply_text(
-        text=_("Wait for response processing..."),
-        parse_mode=ParseMode.MARKDOWN,
-        reply_markup=reply_markup,
-    )
-
-    photo_file = await update.message.photo[-1].get_file()
-    buf = io.BytesIO()
-    await photo_file.download_to_memory(buf)
-    buf.name = "user_image.jpg"
-    buf.seek(0)
-
-    image = PIL.Image.open(buf)
-
-    gemini_image_chat = GeminiChat(
-        gemini_token=os.getenv("GEMINI_API_TOKEN"), image=image
-    )
-
+    logger.info("Received image from user")
     try:
-        response = gemini_image_chat.send_image(update.message.caption)
-
-        if not response:
-            raise Exception(_("Empty response from Gemini"))
-    except Exception as e:
-        logger.warning("Error during image processing: %s", e)
-        response = _("Couldn't generate a response. Please try again.")
-
-    buf.close()
-    del photo_file
-    del image
-
-    keyboard = [[InlineKeyboardButton("Back to menu", callback_data="Start_Again")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    try:
-        await context.bot.send_message(
-            text=response,
-            parse_mode="Markdown",
+        keyboard = [[InlineKeyboardButton(_("Back to menu"), callback_data="Start_Again")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        msg = await update.message.reply_text(
+            text=_("Wait for response processing..."),
+            parse_mode=ParseMode.MARKDOWN,
             reply_markup=reply_markup,
-            chat_id=update.message.chat_id,
         )
-        await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
 
-    except Exception as e:
-        await context.bot.send_message(
-            text=strip_markdown(response),
-            reply_markup=reply_markup,
-            chat_id=update.message.chat_id,
+        photo_file = await update.message.photo[-1].get_file()
+        buf = io.BytesIO()
+        await photo_file.download_to_memory(buf)
+        buf.name = "user_image.jpg"
+        buf.seek(0)
+
+        image = PIL.Image.open(buf)
+
+        gemini_image_chat = GeminiChat(
+            gemini_token=os.getenv("GEMINI_API_TOKEN"), image=image
         )
-        await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
-        logging.warning(__name__, e)
+
+        try:
+            response = gemini_image_chat.send_image(update.message.caption)
+
+            if not response:
+                raise Exception(_("Empty response from Gemini"))
+        except Exception as e:
+            logger.warning("Error during image processing: %s", e)
+            response = _("Couldn't generate a response. Please try again.")
+
+        buf.close()
+        del photo_file
+        del image
+
+        keyboard = [[InlineKeyboardButton("Back to menu", callback_data="Start_Again")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        try:
+            await context.bot.send_message(
+                text=response,
+                parse_mode="Markdown",
+                reply_markup=reply_markup,
+                chat_id=update.message.chat_id,
+            )
+            await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
+
+        except Exception as e:
+            await context.bot.send_message(
+                text=strip_markdown(response),
+                reply_markup=reply_markup,
+                chat_id=update.message.chat_id,
+            )
+            await context.bot.delete_message(chat_id=msg.chat_id, message_id=msg.id)
+            logging.warning(f"Error sending message: {e}")
+    
+    except Exception as e:
+        logger.error(f"Error in generate_text_from_image: {e}")
+        await update.message.reply_text(_("An error occurred while processing the image."))
 
     return CHOOSING
 
