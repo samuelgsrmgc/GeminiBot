@@ -3,6 +3,9 @@ services:
   geminibot:
     build: .
     container_name: geminibot
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - GEMINI_API_TOKEN=${GEMINI_API_TOKEN}
