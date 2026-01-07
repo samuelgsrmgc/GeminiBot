@@ -3,6 +3,8 @@ services:
   geminibot:
     build: .
     container_name: geminibot
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
     dns:
       - 1.1.1.1
       - 8.8.8.8
