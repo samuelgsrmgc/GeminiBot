@@ -29,7 +29,7 @@ from bot.conversation_handlers import (
 # Setup translation
 localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "locales")
 # Determine language from environment variable, default to 'ru'
-lang = os.getenv("LANGUAGE", "ru")
+lang = os.getenv("LANGUAGE", "en")
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 # Install _() globally
 gettext.install("messages", localedir, names=("ngettext",))

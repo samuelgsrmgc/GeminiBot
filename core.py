@@ -38,7 +38,7 @@ class GeminiChat:
             
         lang = os.getenv("LANGUAGE", "en")
         self.chat = model.start_chat(history=history)
-        self.chat.send_message(f"You are a helpful assistant with a female persona. Please respond in {lang} language. Please use Telegram-compatible markdown. For example, use *bold* for bold text, _italic_ for italic, and `code` for code blocks. Do not use markdown features that are not supported by Telegram, such as headers or horizontal rules.")
+        self.chat.send_message(f"You are a helpful assistant. Please respond in {lang} language. Please use Telegram-compatible markdown. For example, use *bold* for bold text, _italic_ for italic, and `code` for code blocks. Do not use markdown features that are not supported by Telegram, such as headers or horizontal rules.")
         logging.info("Start new conversation")
 
     def send_message(self, message_text: str, image=None) -> str:
