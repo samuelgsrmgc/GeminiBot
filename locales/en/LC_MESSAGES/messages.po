@@ -1,0 +1,169 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-12-26 22:53-0400\n"
+"PO-Revision-Date: 2025-12-26 18:40-0400\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: bot/conversation_handlers.py:64 bot/conversation_handlers.py:144
+#: bot/conversation_handlers.py:582
+msgid "Start New Conversation"
+msgstr "Start New Conversation"
+
+#: bot/conversation_handlers.py:67 bot/conversation_handlers.py:147
+#: bot/conversation_handlers.py:585
+msgid "Image Description"
+msgstr "Image Description"
+
+#: bot/conversation_handlers.py:70 bot/conversation_handlers.py:148
+msgid "Chat History"
+msgstr "Chat History"
+
+#: bot/conversation_handlers.py:74 bot/conversation_handlers.py:154
+msgid ""
+"Hi. It's Gemini Chat Bot. You can ask me anything and talk to me about "
+"what you want"
+msgstr ""
+"Hi. It's Gemini Chat Bot. You can ask me anything and talk to me about "
+"what you want"
+
+#: bot/conversation_handlers.py:149
+msgid "Start Again"
+msgstr "Start Again"
+
+#: bot/conversation_handlers.py:169
+msgid "You asked for a conversation. OK, Let's start conversation!"
+msgstr "You asked for a conversation. OK, Let's start conversation!"
+
+#: bot/conversation_handlers.py:173
+msgid "You asked for a continue conversation. OK, Let's go!"
+msgstr "You asked for a continue conversation. OK, Let's go!"
+
+#: bot/conversation_handlers.py:175
+msgid "Return to menu"
+msgstr "Return to menu"
+
+#: bot/conversation_handlers.py:191 bot/conversation_handlers.py:304
+#: bot/conversation_handlers.py:343 bot/conversation_handlers.py:369
+#: bot/conversation_handlers.py:397 bot/conversation_handlers.py:474
+#: bot/conversation_handlers.py:545
+msgid "Back to menu"
+msgstr "Back to menu"
+
+#: bot/conversation_handlers.py:195 bot/conversation_handlers.py:471
+msgid "Message is too long. Please shorten your message and try again."
+msgstr ""
+
+#: bot/conversation_handlers.py:199 bot/conversation_handlers.py:400
+#: bot/conversation_handlers.py:478
+msgid "Wait for response processing..."
+msgstr "Wait for response processing..."
+
+#: bot/conversation_handlers.py:216
+msgid ""
+"Sorry, I couldn't find the history for this conversation. Let's start a "
+"new one."
+msgstr ""
+
+#: bot/conversation_handlers.py:235
+msgid "Save and Back to menu"
+msgstr "Save and Back to menu"
+
+#: bot/conversation_handlers.py:240
+msgid "Back to menu without saving"
+msgstr "Back to menu without saving"
+
+#: bot/conversation_handlers.py:267 bot/conversation_handlers.py:427
+#: bot/conversation_handlers.py:454 bot/conversation_handlers.py:511
+msgid "You have exceeded your daily quota for requests. Please try again later."
+msgstr ""
+
+#: bot/conversation_handlers.py:269 bot/conversation_handlers.py:513
+msgid "An error occurred while processing your message."
+msgstr ""
+
+#: bot/conversation_handlers.py:288
+msgid "Conversation not found."
+msgstr ""
+
+#: bot/conversation_handlers.py:296
+msgid "Continue Conversations"
+msgstr "Continue Conversations"
+
+#: bot/conversation_handlers.py:301
+msgid "Delete Conversation"
+msgstr "Delete Conversation"
+
+#: bot/conversation_handlers.py:315
+msgid "An error occurred while retrieving the conversation."
+msgstr ""
+
+#: bot/conversation_handlers.py:331
+msgid "No conversation selected for deletion."
+msgstr ""
+
+#: bot/conversation_handlers.py:340
+msgid "Could not delete the conversation. It may have been already deleted."
+msgstr ""
+
+#: bot/conversation_handlers.py:347
+msgid ""
+"Conversation history deleted successfully. Back to menu Start new "
+"Conversation"
+msgstr ""
+"Conversation history deleted successfully. Back to menu Start new "
+"Conversation"
+
+#: bot/conversation_handlers.py:355
+msgid "An error occurred while deleting the conversation."
+msgstr ""
+
+#: bot/conversation_handlers.py:373
+msgid "You asked for Image description. OK, Send your image with caption!"
+msgstr "You asked for Image description. OK, Send your image with caption!"
+
+#: bot/conversation_handlers.py:394
+msgid "Image is too large. Please send an image smaller than 4MB."
+msgstr ""
+
+#: bot/conversation_handlers.py:423
+msgid "Empty response from Gemini"
+msgstr "Empty response from Gemini"
+
+#: bot/conversation_handlers.py:429
+msgid "Couldn't generate a response. Please try again."
+msgstr "Couldn't generate a response. Please try again."
+
+#: bot/conversation_handlers.py:456
+msgid "An error occurred while processing the image."
+msgstr ""
+
+#: bot/conversation_handlers.py:539
+msgid "You have not any chat history"
+msgstr "You have not any chat history"
+
+#: bot/conversation_handlers.py:557
+msgid "An error occurred while retrieving the conversation history."
+msgstr ""
+
+#: bot/conversation_handlers.py:586
+msgid "Refresh"
+msgstr "Refresh"
+
+#: bot/conversation_handlers.py:590
+msgid "Until next time!"
+msgstr "Until next time!"
+

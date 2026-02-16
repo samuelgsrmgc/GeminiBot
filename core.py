@@ -1,4 +1,5 @@
 import json
+import os
 import google.generativeai as genai
 import logging
 
@@ -7,89 +8,57 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 class GeminiChat:
-
-    def __init__(
-        self, gemini_token: str, image=None, chat_history: list = None
-    ) -> None:
-        self.image = image
+    def __init__(self, gemini_token: str, chat_history: list = None):
         self.chat_history = chat_history
-        self.GOOGLE_API_KEY = gemini_token
-
-        genai.configure(api_key=self.GOOGLE_API_KEY)
-
+        genai.configure(api_key=gemini_token)
         with open("./safety_settings.json", "r") as fp:
             self.safety_settings = json.load(fp)
-
         logging.info("Initiated new chat model")
 
-    def _handle_exception(self, operation: str, e: Exception) -> None:
-        """Handles exceptions by raising a ValueError."""
-        logging.warning(f"Failed to {operation}: {e}")
-        raise ValueError(f"Failed to {operation}: {e}")
-
-    def _get_model(self, generative_model: str = "gemini-pro") -> genai.GenerativeModel:
-        """Gets a generative model instance."""
+    def _get_model(self, generative_model: str = "gemini-flash-latest"):
+        model_name = os.getenv("GEMINI_MODEL", generative_model)
+        logging.info(f"Trying to get generative model: {model_name}")
         try:
-            logging.info("Trying to get generative model")
-            return genai.GenerativeModel(
-                generative_model, safety_settings=self.safety_settings
-            )
+            return genai.GenerativeModel(model_name, safety_settings=self.safety_settings)
         except Exception as e:
-            self._handle_exception("get model", e)
+            logging.error(f"Failed to get model: {e}")
+            raise
 
-    def send_image(self, message_text: str | None = None) -> str:
-        """Sends an image and message to the model and generates a response."""
-        message_text = message_text or "Please describe this photo"
-        try:
-            model = self._get_model("gemini-pro-vision")
-            response = model.generate_content([message_text, self.image], stream=True)
-            response.resolve()
-            logging.info("Recieved response from Gemini")
-            return "".join([text for text in response.text])
-        except Exception as e:
-            self._handle_exception("send image", e)
-            return "Couldn't reach out to Google Gemini. Try Again..."
+    def start_chat(self, image=None) -> None:
+        model_name = "gemini-pro-vision" if image else "gemini-flash-latest"
+        model = self._get_model(model_name)
+        
+        history = []
+        if image:
+            history.append({'role': 'user', 'parts': [image]})
 
-    def start_chat(self) -> None:
-        """Starts a new chat session."""
-        try:
-            model = self._get_model()
-            self.chat = model.start_chat(history=self.chat_history)
-            logging.info("Start new conversation")
-        except Exception as e:
-            self._handle_exception("start chat", e)
+        if self.chat_history:
+            history.extend(self.chat_history)
+            
+        lang = os.getenv("LANGUAGE", "en")
+        self.chat = model.start_chat(history=history)
+        self.chat.send_message(f"You are a helpful assistant with a female persona. Please respond in {lang} language. Please use Telegram-compatible markdown. For example, use *bold* for bold text, _italic_ for italic, and `code` for code blocks. Do not use markdown features that are not supported by Telegram, such as headers or horizontal rules.")
+        logging.info("Start new conversation")
 
-    def send_message(self, message_text: str) -> str:
-        """Sends a message to the chat session and returns the response."""
+    def send_message(self, message_text: str, image=None) -> str:
         try:
-            response = self.chat.send_message(message_text, stream=True)
-            response.resolve()
-            logging.info("Recieved response from Gemini")
-            return "".join([text for text in response.text])
+            if image:
+                response = self.chat.send_message([message_text, image])
+            else:
+                response = self.chat.send_message(message_text)
+            return response.text
         except Exception as e:
-            self._handle_exception("send message", e)
+            logging.error(f"Failed to send message: {e}")
             return "Couldn't reach out to Google Gemini. Try Again..."
 
     def get_chat_title(self) -> str:
-        """Gets a short title for the conversation."""
-        try:
-            return self.send_message(
-                "Write a one-line short title up to 10 words for this conversation in plain text."
-            )
-        except Exception as e:
-            self._handle_exception("get chat title", e)
+        return self.send_message("Write a one-line short title up to 10 words for this conversation in plain text.")
 
     def get_chat_history(self):
-        """Gets the chat history."""
-        try:
-            return self.chat.history
-        except Exception as e:
-            self._handle_exception("get chat history", e)
+        return self.chat.history
 
     def close(self) -> None:
-        """Closes the chat and cleans history."""
         logging.info("Closed model instance")
         self.chat = None
         self.chat_history = []

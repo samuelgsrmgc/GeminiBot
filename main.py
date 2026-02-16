@@ -1,6 +1,6 @@
 import os
 import logging
-from dotenv import load_dotenv
+import gettext
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -9,6 +9,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler,
     filters,
+    PicklePersistence,
 )
 from database.database import create_connection, create_table
 from bot.conversation_handlers import (
@@ -22,18 +23,29 @@ from bot.conversation_handlers import (
     get_conversation_handler,
     delete_conversation_handler,
     done,
+    reply_to_image_conversation,
 )
 
-load_dotenv()
+# Setup translation
+localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "locales")
+# Determine language from environment variable, default to 'ru'
+lang = os.getenv("LANGUAGE", "ru")
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+# Install _() globally
+gettext.install("messages", localedir, names=("ngettext",))
+gettext.translation("messages", localedir, languages=[lang], fallback=True).install()
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=log_level
 )
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-CHOOSING, IMAGE_CHOICE, CONVERSATION, CONVERSATION_HISTORY = range(4)
+logging.info(f"Selected language: {lang}")
+logging.info(f"Selected log level: {log_level}")
+
+CHOOSING, IMAGE_CHOICE, CONVERSATION, CONVERSATION_HISTORY, IMAGE_CONVERSATION = range(5)
 
 
 def entry_points():
@@ -69,13 +81,13 @@ def states():
         IMAGE_CHOICE: [
             MessageHandler(
                 filters.PHOTO,
-                lambda update, context: generate_text_from_image(update, context),
+                generate_text_from_image,
             )
         ],
         CONVERSATION: [
             MessageHandler(
                 filters.TEXT & ~filters.Regex("^/"),
-                lambda update, context: reply_and_new_message(update, context),
+                reply_and_new_message,
             )
         ],
         CONVERSATION_HISTORY: [
@@ -94,6 +106,12 @@ def states():
                 pattern="^Delete_Conversation$",
             ),
         ],
+        IMAGE_CONVERSATION: [
+            MessageHandler(
+                filters.TEXT & ~filters.Regex("^/"),
+                reply_to_image_conversation,
+            )
+        ],
     }
 
 
@@ -111,12 +129,19 @@ def fallbacks():
 
 def create_conv_handler():
     return ConversationHandler(
-        entry_points=entry_points(), states=states(), fallbacks=fallbacks()
+        entry_points=entry_points(),
+        states=states(),
+        fallbacks=fallbacks(),
+        persistent=True,
+        name="gemini_conversation",
+        per_message=False,
+        allow_reentry=True,
     )
 
 
 def main() -> None:
-    application = Application.builder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+    persistence = PicklePersistence(filepath="conversation_persistence")
+    application = Application.builder().token(os.getenv("TELEGRAM_BOT_TOKEN")).persistence(persistence).build()
 
     conv_handler = create_conv_handler()
     application.add_handler(conv_handler)
@@ -125,7 +150,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    database = "./conversations_data.db"
+    database = "data/conversations_data.db"
 
     conn = create_connection(database)
     create_table(conn)

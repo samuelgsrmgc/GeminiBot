@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  geminibot:
+    build: .
+    container_name: geminibot
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - GEMINI_API_TOKEN=${GEMINI_API_TOKEN}
+      - GEMINI_MODEL=${GEMINI_MODEL}
+      - AUTHORIZED_USER=${AUTHORIZED_USER}
+      - LANGUAGE=${LANGUAGE}
+      - LOG_LEVEL=${LOG_LEVEL}
+    volumes:
+      - ./data:/usr/src/app/data
+    restart: unless-stopped

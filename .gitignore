@@ -53,7 +53,7 @@ coverage.xml
 cover/
 
 # Translations
-*.mo
+
 *.pot
 
 # Django stuff:
@@ -120,8 +120,7 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 *.db
-conversations_data.db
-*.pickle
+data/
 
 # Environments
 .env
@@ -150,6 +149,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# conversation persistence
+conversation_persistence
+
 # pytype static type analyzer
 .pytype/
 
@@ -162,3 +164,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+run.sh

@@ -61,12 +61,89 @@ Your `.env` file should resemble the following:
 ```dotenv
 TELEGRAM_BOT_TOKEN=<Your Telegram Bot Token>
 GEMINI_API_TOKEN=<Your Gemini API key>
-AUTHORIZED_USER=<Your Telegram account ID number>
+GEMINI_MODEL=<Your Gemini Model (e.g., gemini-flash-latest)>
+AUTHORIZED_USER=<your_user_id_1>,<your_user_id_2>
 ```
 
 To obtain your Telegram account ID, you can send a message to Show Json Bot in Telegram. It will show your account information in a JSON format, and you can find your account ID in the chat section of the JSON file that the bot responds with. Note that the account ID is different from your username and is not mutable for Telegram accounts unless you delete your account and create another one.
 
 If you want to modify user restrictions, you can examine the `restricted` decorator in the `bot/conversation_handlers.py` file.
+
+### Local Development
+
+For local development, it's recommended to use a Python virtual environment to manage dependencies.
+
+**Steps:**
+
+1.  **Create and activate a virtual environment:**
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Set environment variables:** Set the required environment variables in your active shell session. Replace the placeholder values with your actual tokens and IDs.
+
+    ```bash
+    export TELEGRAM_BOT_TOKEN=<Your Telegram Bot Token>
+    export GEMINI_API_TOKEN=<Your Gemini API key>
+    export GEMINI_MODEL=<Your Gemini Model> # e.g., gemini-flash-latest
+    export AUTHORIZED_USER="<your_user_id_1>,<your_user_id_2>"
+    export LANGUAGE=ru # Set the desired language (e.g., en, ru)
+    ```
+
+4.  **Run the bot:**
+
+    ```bash
+    python main.py
+    ```
+
+### Environment Variables
+
+The bot is configured using environment variables. The following variables are required:
+
+-   `TELEGRAM_BOT_TOKEN`: Your Telegram bot token from BotFather.
+-   `GEMINI_API_TOKEN`: Your Gemini API key from Google AI Studio.
+-   `GEMINI_MODEL`: The Gemini model to use (e.g., `gemini-flash-latest`).
+-   `AUTHORIZED_USER`: A comma-separated list of your Telegram user IDs to restrict bot access.
+-   `LANGUAGE`: The language code for the bot's interface (e.g., `en`, `ru`). Defaults to `ru`.
+-   `LOG_LEVEL`: The logging level for the bot (e.g., `DEBUG`, `INFO`, `WARNING`, `ERROR`). Defaults to `INFO`.
+
+### Deployment with Docker
+
+The recommended way to deploy the bot is using Docker and Docker Compose.
+
+**Data Persistence:**
+
+The bot stores conversation data in the `data` directory. This directory is mounted as a volume in the Docker Compose configuration to ensure that your data is preserved even if the container is removed.
+
+**Configuration:**
+
+When deploying with Docker, you should provide the required environment variables to the container. The recommended way to do this is through your orchestration platform (e.g., Portainer, Kubernetes) by setting the environment variables in the container's configuration.
+
+**Build and Run:**
+
+```bash
+docker-compose up -d --build
+```
+
+The bot will now be running in the background. To view the logs, you can use the following command:
+
+```bash
+docker-compose logs -f
+```
+
+To stop the bot, use the following command:
+
+```bash
+docker-compose down
+```
 
 ## Deploy and Run Telegram Bot on Linux Server
 
@@ -74,7 +151,15 @@ To deploy your bot there are several ways like Heroku and PythonAnywhere or othe
 ```
 git clone https://github.com/sudoAlireza/GeminiBot.git
 ```
-Then create `.env` file in root of the project and fill variables with tokens and ID's you got from Google and Telegram. In the next step install project reqirements with this code in your Virual environment:
+Then, set the environment variables in your shell:
+```bash
+export TELEGRAM_BOT_TOKEN=<Your Telegram Bot Token>
+export GEMINI_API_TOKEN=<Your Gemini API key>
+export GEMINI_MODEL=gemini-flash-latest # e.g., gemini-flash-latest
+export AUTHORIZED_USER="<your_user_id_1>,<your_user_id_2>"
+export LANGUAGE=ru # Set the desired language (e.g., en, ru)
+``````
+In the next step install project reqirements with this code in your Virual environment:
 ```
 python3 -m venv venv --prompt GeminiBot
 source venv/bin/activate
